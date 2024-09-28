@@ -1,19 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
 
 
 int main() {
-
-char cwd[1024];
-if (getcwd(cwd, sizeof(cwd)) != NULL) {
-    printf("Current working directory: %s\n", cwd);
-} else {
-    perror("getcwd() error");
-    return 1;
-}
-
 
 char greeting[] = "Hallo";
 
@@ -23,7 +13,7 @@ int length = sizeof(names) / sizeof(names[0]);
 int i;
 
 FILE *fptr;
-fptr = fopen("hello.txt", "w");
+fptr = fopen("C:/Users/maxsa/Documents/projects/C/textfiles/hello.txt", "w");
 
 if (fptr == NULL) {
     printf("Error opening file!");
@@ -37,10 +27,7 @@ for (int i = 0; i < length; i++)
         continue;
     }  
 
-    fprintf(fptr, greeting); 
-    fprintf(fptr, " "); 
-    fprintf(fptr, names[i]); 
-    fprintf(fptr, "\n"); 
+    fprintf(fptr, "%s %s\n", greeting, names[i]);
 
 }
 
