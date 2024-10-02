@@ -1,5 +1,6 @@
 {
     "C_Cpp.default.compilerPath": "C:\\MinGW\\bin\\gcc.exe",
+    "C_Cpp.intelliSenseEngine": "default",
     "files.associations": {
         "unistd.h": "c"
     }

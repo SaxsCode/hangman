@@ -7,7 +7,7 @@ int main() {
 
 char greeting[] = "Hallo";
 
-char names[][10] = {"Max", "Kato", "Tijn"};
+char names[][10] = {"Max", "Kato", "Tijn", "Test"};
 
 int length = sizeof(names) / sizeof(names[0]);
 int i;
