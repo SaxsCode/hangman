@@ -23,7 +23,18 @@ printf("Guess a letter: \n");
 fflush(stdout);
 scanf(" %c", &userLetter);
 
-// printf("Your letter is: %c\n", userLetter);
+
+if (strchr(word, userLetter) != NULL)
+{
+    printf("The word does contain:  %c\n", userLetter);    
+    printf("Guess a letter: \n");
+    scanf(" %c", &userLetter);
+
+} else {
+    printf("WRONG!");
+    printf("Guess a letter: \n");
+    scanf(" %c", &userLetter);
+}
 
 return 0;
 
