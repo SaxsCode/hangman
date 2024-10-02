@@ -5,6 +5,9 @@
 
 #define MAX_WORD_LENGTH 11
 
+int getKeyByValue(char arr[], int size, char value);
+void removeElement(char arr[], int *size, char element);
+
 int main() {
 
 srand(time(NULL));
@@ -18,6 +21,9 @@ const char *word = words[randomKey];
 
 int haveToGuess[MAX_WORD_LENGTH];
 int wordLength = strlen(word);
+int guessLength = sizeof(haveToGuess) / sizeof(haveToGuess[0]);
+
+
 
 for (int i = 0; i < wordLength; i++) {
     haveToGuess[i] = word[i];
@@ -32,33 +38,36 @@ printf("Characters to guess:\n");
 
 char userLetter;
 
-printf("Guess a letter: \n");
-scanf(" %c", &userLetter);
+for (int i = 0; i < guessLength; i++) {
 
+    printf("Guess a letter: \n");
+    scanf(" %c", &userLetter);
 
-if (strchr(word, userLetter) != NULL)
-{
-    printf("The word does contain:  %c\n", userLetter);   
+    int key = getKeyByValue(haveToGuess, &wordLength, userLetter);
+    printf("key = %c\n", key);
 
-    removeElement(haveToGuess, &wordLength, userLetter);
-
-    printf("Characters to guess:\n");
-    for (int i = 0; i < wordLength; i++) {
-        printf("%d => %c\n", i, haveToGuess[i]);
+    if (haveToGuess[key] != NULL)
+    {
+        printf("The word does contain:  %c\n", userLetter);   
+        removeElement(haveToGuess, &wordLength, userLetter);
+    } else 
+    {
+        printf("WRONG!");
     }
 
-
-    printf("Guess a letter: \n");
-    scanf(" %c", &userLetter);
-
-} else {
-    printf("WRONG!");
-    printf("Guess a letter: \n");
-    scanf(" %c", &userLetter);
 }
 
 return 0;
 
+}
+
+int getKeyByValue(int arr[], int size, int value) {
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == value) {
+            return i;  // Return the index (key) if value is found
+        }
+    }
+    return -1;  // Return -1 if value is not found
 }
 
 void removeElement(int arr[], int *size, int element) {
