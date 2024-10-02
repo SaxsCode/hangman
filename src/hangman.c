@@ -3,24 +3,36 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define MAX_WORD_LENGTH 11
 
 
 int main() {
 
 srand(time(NULL));
 
-char words[][11] = {"boomhut", "apenstaart", "flapdrol", "hangman"}; 
+char words[][MAX_WORD_LENGTH] = {"boomhut", "apenstaart", "flapdrol", "hangman"}; 
 int numWords = sizeof(words) / sizeof(words[0]);
 
 int randomKey = rand() % numWords;
 const char *word = words[randomKey];
 
+
+char haveToGuess[MAX_WORD_LENGTH];
+int wordLength = strlen(word);
+
+for (int i = 0; i < wordLength; i++) {
+    haveToGuess[i] = word[i];
+}
+
 printf("%s\n", word);
+printf("Characters to guess:\n");
+    for (int i = 0; i < wordLength; i++) {
+        printf("%d => %c\n", i, haveToGuess[i]);
+    }
 
 char userLetter;
 
 printf("Guess a letter: \n");
-fflush(stdout);
 scanf(" %c", &userLetter);
 
 
