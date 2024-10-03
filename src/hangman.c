@@ -1,12 +1,12 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
 
-#define MAX_WORD_LENGTH 11
+#define MAX_WORD_LENGTH 20
 
 int getKeyByValue(char arr[], int size, char value);
-void removeElement(char arr[], int *size, char element);
+void showCensoredWord(char arr[], int size, char guessed[]);
 
 int main() {
     srand(time(NULL));
@@ -15,31 +15,53 @@ int main() {
     int numWords = sizeof(words) / sizeof(words[0]);
 
     int randomKey = rand() % numWords;
-    const char *word = words[randomKey];
+    char word[MAX_WORD_LENGTH];
+    strcpy(word, words[randomKey]);
 
-    char haveToGuess[MAX_WORD_LENGTH];  
     int wordLength = strlen(word);
+    char guessed[MAX_WORD_LENGTH] = {0};
 
-    printf("%s\n", word);
+    showCensoredWord(word, wordLength, guessed);
+    
     char userLetter;
+    int remainingLetters = wordLength;
 
-    for (int i = 0; i < wordLength; i) {  
-        printf("Guess a letter: \n");
+    while (remainingLetters > 0) {  
+        printf("Guess a letter: ");
         scanf(" %c", &userLetter);
 
         int key = getKeyByValue(word, wordLength, userLetter); 
 
-        if (key != -1)
+        if (key != -1 && !strchr(guessed, userLetter))
         {
             printf("The word does contain: %c\n", userLetter);   
-            removeElement(word, &wordLength, userLetter);
+            guessed[strlen(guessed)] = userLetter;
+            remainingLetters--;
         } else 
         {
             printf("WRONG!\n");
         }
+        printf("%c", remainingLetters);
+
+        showCensoredWord(word, wordLength, guessed);
     }
 
+    printf("Congratulations! You guessed the word: %s\n", word);
+
     return 0;
+}
+
+void showCensoredWord(char arr[], int size, char guessed[])
+{
+    for (int i = 0; i < size; i++) {
+        if (strchr(guessed, arr[i]))
+        {
+            printf("%c", arr[i]);
+        } else {
+            printf("_");
+        }
+    }
+    printf("\n");
 }
 
 int getKeyByValue(char arr[], int size, char value) {  
@@ -49,25 +71,4 @@ int getKeyByValue(char arr[], int size, char value) {
         }
     }
     return -1;
-}
-
-void removeElement(char arr[], int *size, char element) {  
-    int i, j, found = 0;
-
-    for (i = 0; i < *size; i++) {
-        if (arr[i] == element) {
-            found = 1;
-            break;
-        }
-    }
-
-    if (found) {
-        for (j = i; j < *size - 1; j++) {
-            arr[j] = arr[j + 1];
-        }
-        (*size)--;
-        printf("Element %c removed successfully.\n", element);
-    } else {
-        printf("Element %c not found in the array.\n", element);
-    }
 }
