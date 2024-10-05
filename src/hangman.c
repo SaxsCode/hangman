@@ -4,10 +4,12 @@
 #include <time.h>
 
 #define MAX_WORD_LENGTH 20
+#define MAX_ERRORS 5
 
 int getKeyByValue(char arr[], int size, char value);
 void showCensoredWord(char arr[], int size, char guessed[]);
 int countUnguessedLetters(char word[], int wordLength, char guessed[]);
+int showEndScreen();
 
 
 int main() {
@@ -28,6 +30,7 @@ int main() {
     char userLetter;
     int remainingLetters = wordLength;
 
+    int errors = 0;
     while (countUnguessedLetters(word, wordLength, guessed) > 0) { 
          
         printf("Guess a letter: ");
@@ -42,23 +45,22 @@ int main() {
         } else 
         {
             printf("WRONG!\n");
+            errors++;
+
+            if (errors >= MAX_ERRORS)
+            {
+                    printf("Oof! You failed!, the word was: %s\n", word);
+                    showEndScreen();
+                    return 0;
+            }
+            
         }
 
         showCensoredWord(word, wordLength, guessed);
     }
 
     printf("Congratulations! You guessed the word: %s\n", word);
-
-
-    char input;
-
-    printf("Press Enter to end the program...");
-
-    while (getchar() != '\n');
-    getchar();  
-
-    return 0;
-
+    showEndScreen();
 }
 
 void showCensoredWord(char arr[], int size, char guessed[])
@@ -91,4 +93,15 @@ int countUnguessedLetters(char word[], int wordLength, char guessed[]) {
         }
     }
     return count;
+}
+
+int showEndScreen()
+{
+    printf("Press Enter to end the program...");
+
+    while (getchar() != '\n');
+    getchar();  
+
+    return 0;
+
 }
