@@ -7,6 +7,8 @@
 
 int getKeyByValue(char arr[], int size, char value);
 void showCensoredWord(char arr[], int size, char guessed[]);
+int countUnguessedLetters(char word[], int wordLength, char guessed[]);
+
 
 int main() {
     srand(time(NULL));
@@ -26,9 +28,10 @@ int main() {
     char userLetter;
     int remainingLetters = wordLength;
 
-    while (remainingLetters > 0) {  
+    while (countUnguessedLetters(word, wordLength, guessed) > 0) { 
+         
         printf("Guess a letter: ");
-        scanf(" %c", &userLetter);
+        scanf(" %c", &userLetter);        
 
         int key = getKeyByValue(word, wordLength, userLetter); 
 
@@ -36,19 +39,26 @@ int main() {
         {
             printf("The word does contain: %c\n", userLetter);   
             guessed[strlen(guessed)] = userLetter;
-            remainingLetters--;
         } else 
         {
             printf("WRONG!\n");
         }
-        printf("%c", remainingLetters);
 
         showCensoredWord(word, wordLength, guessed);
     }
 
     printf("Congratulations! You guessed the word: %s\n", word);
 
+
+    char input;
+
+    printf("Press Enter to end the program...");
+
+    while (getchar() != '\n');
+    getchar();  
+
     return 0;
+
 }
 
 void showCensoredWord(char arr[], int size, char guessed[])
@@ -71,4 +81,14 @@ int getKeyByValue(char arr[], int size, char value) {
         }
     }
     return -1;
+}
+
+int countUnguessedLetters(char word[], int wordLength, char guessed[]) {
+    int count = 0;
+    for (int i = 0; i < wordLength; i++) {
+        if (!strchr(guessed, word[i])) {
+            count++;
+        }
+    }
+    return count;
 }
