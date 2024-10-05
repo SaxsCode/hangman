@@ -2,73 +2,81 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
 
 #define MAX_WORD_LENGTH 20
-#define MAX_ERRORS 5
+#define MAX_ERRORS 9
+#define MAX_WORDS 4
 
-int getKeyByValue(char arr[], int size, char value);
-void showCensoredWord(char arr[], int size, char guessed[]);
-int countUnguessedLetters(char word[], int wordLength, char guessed[]);
-int showEndScreen();
+typedef struct {
+    char word[MAX_WORD_LENGTH];
+    char guessed[MAX_WORD_LENGTH];
+    int wordLength;
+    int errors;
+} GameState;
 
+void initializeGame(GameState *game, const char words[][MAX_WORD_LENGTH]);
+bool makeGuess(GameState *game, char letter);
+void displayGame(const GameState *game);
+void displayEndScreen(const GameState *game, bool won);
+void clearInputBuffer(void);
+int getUnguessedCount(const GameState *game);
 
 int main() {
-    srand(time(NULL));
-
-    char words[][MAX_WORD_LENGTH] = {"boomhut", "apenstaart", "flapdrol", "hangman"}; 
-    int numWords = sizeof(words) / sizeof(words[0]);
-
-    int randomKey = rand() % numWords;
-    char word[MAX_WORD_LENGTH];
-    strcpy(word, words[randomKey]);
-
-    int wordLength = strlen(word);
-    char guessed[MAX_WORD_LENGTH] = {0};
-
-    showCensoredWord(word, wordLength, guessed);
-    
+    const char words[][MAX_WORD_LENGTH] = {"boomhut", "apenstaart", "flapdrol", "hangman"};
+    GameState game;
     char userLetter;
-    int remainingLetters = wordLength;
+    
+    srand(time(NULL));
+    initializeGame(&game, words);
+    displayGame(&game);
 
-    int errors = 0;
-    while (countUnguessedLetters(word, wordLength, guessed) > 0) { 
-         
+    while (getUnguessedCount(&game) > 0 && game.errors < MAX_ERRORS) {
         printf("Guess a letter: ");
-        scanf(" %c", &userLetter);        
-
-        int key = getKeyByValue(word, wordLength, userLetter); 
-
-        if (key != -1 && !strchr(guessed, userLetter))
-        {
-            printf("The word does contain: %c\n", userLetter);   
-            guessed[strlen(guessed)] = userLetter;
-        } else 
-        {
-            printf("WRONG!\n");
-            errors++;
-
-            if (errors >= MAX_ERRORS)
-            {
-                    printf("Oof! You failed!, the word was: %s\n", word);
-                    showEndScreen();
-                    return 0;
-            }
-            
+        scanf(" %c", &userLetter);
+        
+        if (!makeGuess(&game, userLetter)) {
+            game.errors++;
+            printf("WRONG! Errors: %d/%d\n", game.errors, MAX_ERRORS);
         }
-
-        showCensoredWord(word, wordLength, guessed);
+        
+        displayGame(&game);
     }
 
-    printf("Congratulations! You guessed the word: %s\n", word);
-    showEndScreen();
+    bool won = (getUnguessedCount(&game) == 0);
+    displayEndScreen(&game, won);
+
+    return 0;
 }
 
-void showCensoredWord(char arr[], int size, char guessed[])
-{
-    for (int i = 0; i < size; i++) {
-        if (strchr(guessed, arr[i]))
-        {
-            printf("%c", arr[i]);
+void initializeGame(GameState *game, const char words[][MAX_WORD_LENGTH]) {
+    int randomKey = rand() % MAX_WORDS;
+    strcpy(game->word, words[randomKey]);
+    game->wordLength = strlen(game->word);
+    memset(game->guessed, 0, MAX_WORD_LENGTH);
+    game->errors = 0;
+}
+
+bool makeGuess(GameState *game, char letter) {
+    bool letterFound = false;
+    for (int i = 0; i < game->wordLength; i++) {
+        if (game->word[i] == letter) {
+            letterFound = true;
+        }
+    }
+
+    if (letterFound && !strchr(game->guessed, letter)) {
+        game->guessed[strlen(game->guessed)] = letter;
+        printf("The word does contain: %c\n", letter);
+        return true;
+    }
+    return false;
+}
+
+void displayGame(const GameState *game) {
+    for (int i = 0; i < game->wordLength; i++) {
+        if (strchr(game->guessed, game->word[i])) {
+            printf("%c", game->word[i]);
         } else {
             printf("_");
         }
@@ -76,32 +84,28 @@ void showCensoredWord(char arr[], int size, char guessed[])
     printf("\n");
 }
 
-int getKeyByValue(char arr[], int size, char value) {  
-    for (int i = 0; i < size; i++) {
-        if (arr[i] == value) {
-            return i;
-        }
+void displayEndScreen(const GameState *game, bool won) {
+    if (won) {
+        printf("Congratulations! You guessed the word: %s\n", game->word);
+    } else {
+        printf("Oof! You failed! The word was: %s\n", game->word);
     }
-    return -1;
+    
+    printf("Press Enter to end the program...");
+    clearInputBuffer();
+    getchar();
 }
 
-int countUnguessedLetters(char word[], int wordLength, char guessed[]) {
+void clearInputBuffer(void) {
+    while (getchar() != '\n');
+}
+
+int getUnguessedCount(const GameState *game) {
     int count = 0;
-    for (int i = 0; i < wordLength; i++) {
-        if (!strchr(guessed, word[i])) {
+    for (int i = 0; i < game->wordLength; i++) {
+        if (!strchr(game->guessed, game->word[i])) {
             count++;
         }
     }
     return count;
-}
-
-int showEndScreen()
-{
-    printf("Press Enter to end the program...");
-
-    while (getchar() != '\n');
-    getchar();  
-
-    return 0;
-
 }
