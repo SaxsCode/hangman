@@ -6,7 +6,7 @@
 
 #define MAX_WORD_LENGTH 20
 #define MAX_ERRORS 9
-#define MAX_WORDS 4
+#define MAX_WORDS 100
 
 typedef struct {
     char word[MAX_WORD_LENGTH];
@@ -15,7 +15,13 @@ typedef struct {
     int errors;
 } GameState;
 
-void initializeGame(GameState *game, const char words[][MAX_WORD_LENGTH]);
+typedef struct {
+    char words[MAX_WORDS][MAX_WORD_LENGTH];
+    int wordCount;
+} WordsList;
+
+bool loadWords(WordsList *wordsList, const char *filename);
+void initializeGame(GameState *game, const WordsList *wordsList);
 bool makeGuess(GameState *game, char letter);
 void displayGame(const GameState *game);
 void displayEndScreen(const GameState *game, bool won);
@@ -23,12 +29,18 @@ void clearInputBuffer(void);
 int getUnguessedCount(const GameState *game);
 
 int main() {
-    const char words[][MAX_WORD_LENGTH] = {"boomhut", "apenstaart", "flapdrol", "hangman"};
+    WordsList wordsList;
     GameState game;
     char userLetter;
+
+    // Load words from file
+    if (!loadWords(&wordsList, "textfiles/words.txt")) {
+        printf("Error loading words file. Make sure 'words.txt' exists in the same directory.\n");
+        return 1;
+    }
     
     srand(time(NULL));
-    initializeGame(&game, words);
+    initializeGame(&game, &wordsList);
     displayGame(&game);
 
     while (getUnguessedCount(&game) > 0 && game.errors < MAX_ERRORS) {
@@ -49,9 +61,34 @@ int main() {
     return 0;
 }
 
-void initializeGame(GameState *game, const char words[][MAX_WORD_LENGTH]) {
-    int randomKey = rand() % MAX_WORDS;
-    strcpy(game->word, words[randomKey]);
+
+bool loadWords(WordsList *wordsList, const char *filename) {
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        return false;
+    }
+
+    wordsList->wordCount = 0;
+    while (fgets(wordsList->words[wordsList->wordCount], MAX_WORD_LENGTH, file) != NULL) {
+        // Remove newline character if present
+        size_t len = strlen(wordsList->words[wordsList->wordCount]);
+        if (len > 0 && wordsList->words[wordsList->wordCount][len-1] == '\n') {
+            wordsList->words[wordsList->wordCount][len-1] = '\0';
+        }
+        
+        wordsList->wordCount++;
+        if (wordsList->wordCount >= MAX_WORDS) {
+            break;
+        }
+    }
+
+    fclose(file);
+    return wordsList->wordCount > 0;
+}
+
+void initializeGame(GameState *game, const WordsList *wordsList) {
+    int randomKey = rand() % wordsList->wordCount;
+    strcpy(game->word, wordsList->words[randomKey]);
     game->wordLength = strlen(game->word);
     memset(game->guessed, 0, MAX_WORD_LENGTH);
     game->errors = 0;
