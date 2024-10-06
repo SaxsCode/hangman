@@ -172,7 +172,7 @@ bool makeGuess(GameState *game, char letter) {
 
     if (letterFound && !strchr(game->guessed, letter)) {
         game->guessed[strlen(game->guessed)] = letter;
-        printf("\n  The word does contain: %c\n", letter);
+        printf("\n  CORRECT! The word contains: %c\n", letter);
         return true;
     }
     return false;
@@ -194,7 +194,7 @@ void displayEndScreen(const GameState *game, bool won) {
     if (won) {
         printf("\n  Congratulations! You guessed the word: %s\n", game->word);
     } else {
-        printf("\n  Game over! The word was: %s\n", game->word);
+        printf("  Game over! The word was: %s\n", game->word);
     }
 }
 
