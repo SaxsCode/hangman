@@ -28,6 +28,8 @@ void displayEndScreen(const GameState *game, bool won);
 void clearInputBuffer(void);
 int getUnguessedCount(const GameState *game);
 bool playAgainPrompt(void);
+void welcomeScreen();
+
 
 int main() {
     WordsList wordsList;
@@ -43,18 +45,20 @@ int main() {
     
     srand(time(NULL));
 
+    welcomeScreen();
+
     while (playAgain)
     {
         initializeGame(&game, &wordsList);
         displayGame(&game);
 
         while (getUnguessedCount(&game) > 0 && game.errors < MAX_ERRORS) {
-            printf("Guess a letter: ");
+            printf("\n  Guess a letter: ");
             scanf(" %c", &userLetter);
 
             if (!makeGuess(&game, userLetter)) {
                 game.errors++;
-                printf("WRONG! Errors: %d/%d\n", game.errors, MAX_ERRORS);
+                printf("\n  WRONG! Errors: %d/%d\n", game.errors, MAX_ERRORS);
             }
 
             displayGame(&game);
@@ -65,11 +69,11 @@ int main() {
 
         playAgain = playAgainPrompt();
         if (playAgain) {
-            printf("\n=== Starting New Game ===\n\n");
+            printf("\n  === Starting New Game ===\n\n");
         }
     }
     
-    printf("Thanks for playing! Goodbye!\n");
+    printf("\n  Thanks for playing! Goodbye!\n");
     return 0;
 }
 
@@ -79,7 +83,7 @@ bool playAgainPrompt(void) {
     bool playAgain = false;
     
     while (!validResponse) {
-        printf("Would you like to play again? (y/n): ");
+        printf("\n  Would you like to play again? (y/n): ");
         scanf(" %c", &response);
         clearInputBuffer();
         
@@ -90,7 +94,7 @@ bool playAgainPrompt(void) {
             validResponse = true;
             playAgain = false;
         } else {
-            printf("Invalid input. Please enter 'y' or 'n'.\n");
+            printf("  Invalid input. Please enter 'y' or 'n'.\n");
         }
     }
     
@@ -121,6 +125,35 @@ bool loadWords(WordsList *wordsList, const char *filename) {
     return wordsList->wordCount > 0;
 }
 
+void welcomeScreen() {
+    printf("\n");
+    printf("  +-------------------------------------------+\n");
+    printf("  |             WELCOME TO HANGMAN            |\n");
+    printf("  |                 by Sax                    |\n");
+    printf("  +-------------------------------------------+\n");
+    printf("\n");
+    printf("     _______\n");
+    printf("    |/      |\n");
+    printf("    |      (_)\n");
+    printf("    |      \\|/\n");
+    printf("    |       |\n");
+    printf("    |      / \\\n");
+    printf("    |\n");
+    printf("    |___\n");
+    printf("\n");
+    printf("  +-------------- HOW TO PLAY ---------------+\n");
+    printf("  | * Guess one letter at a time             |\n");
+    printf("  | * You have 9 lives to guess the word     |\n");
+    printf("  | * The word will be revealed as you guess |\n");
+    printf("  | * Good luck and have fun!                |\n");
+    printf("  +----------------------------------------+\n");
+    printf("\n");
+    printf("  Press Enter to start...");
+    getchar();
+    printf("\n");
+}
+
+
 void initializeGame(GameState *game, const WordsList *wordsList) {
     int randomKey = rand() % wordsList->wordCount;
     strcpy(game->word, wordsList->words[randomKey]);
@@ -139,13 +172,14 @@ bool makeGuess(GameState *game, char letter) {
 
     if (letterFound && !strchr(game->guessed, letter)) {
         game->guessed[strlen(game->guessed)] = letter;
-        printf("The word does contain: %c\n", letter);
+        printf("\n  The word does contain: %c\n", letter);
         return true;
     }
     return false;
 }
 
 void displayGame(const GameState *game) {
+    printf("  ");
     for (int i = 0; i < game->wordLength; i++) {
         if (strchr(game->guessed, game->word[i])) {
             printf("%c", game->word[i]);
@@ -158,9 +192,9 @@ void displayGame(const GameState *game) {
 
 void displayEndScreen(const GameState *game, bool won) {
     if (won) {
-        printf("Congratulations! You guessed the word: %s\n", game->word);
+        printf("\n  Congratulations! You guessed the word: %s\n", game->word);
     } else {
-        printf("Oof! You failed! The word was: %s\n", game->word);
+        printf("\n  Game over! The word was: %s\n", game->word);
     }
 }
 
