@@ -29,6 +29,7 @@ void clearInputBuffer(void);
 int getUnguessedCount(const GameState *game);
 bool playAgainPrompt(void);
 void welcomeScreen();
+void showHangman(const GameState *game);
 
 
 int main() {
@@ -59,6 +60,8 @@ int main() {
             if (!makeGuess(&game, userLetter)) {
                 game.errors++;
                 printf("\n  WRONG! Errors: %d/%d\n", game.errors, MAX_ERRORS);
+
+                showHangman(&game);
             }
 
             displayGame(&game);
@@ -125,34 +128,6 @@ bool loadWords(WordsList *wordsList, const char *filename) {
     return wordsList->wordCount > 0;
 }
 
-void welcomeScreen() {
-    printf("\n");
-    printf("  +-------------------------------------------+\n");
-    printf("  |             WELCOME TO HANGMAN            |\n");
-    printf("  |                 by Sax                    |\n");
-    printf("  +-------------------------------------------+\n");
-    printf("\n");
-    printf("     _______\n");
-    printf("    |/      |\n");
-    printf("    |      (_)\n");
-    printf("    |      \\|/\n");
-    printf("    |       |\n");
-    printf("    |      / \\\n");
-    printf("    |\n");
-    printf("    |___\n");
-    printf("\n");
-    printf("  +-------------- HOW TO PLAY ---------------+\n");
-    printf("  | * Guess one letter at a time             |\n");
-    printf("  | * You have 9 lives to guess the word     |\n");
-    printf("  | * The word will be revealed as you guess |\n");
-    printf("  | * Good luck and have fun!                |\n");
-    printf("  +----------------------------------------+\n");
-    printf("\n");
-    printf("  Press Enter to start...");
-    getchar();
-    printf("\n");
-}
-
 
 void initializeGame(GameState *game, const WordsList *wordsList) {
     int randomKey = rand() % wordsList->wordCount;
@@ -211,3 +186,126 @@ int getUnguessedCount(const GameState *game) {
     }
     return count;
 }
+
+// ASCII ART
+
+void showHangman(const GameState *game) {
+    const char *hangmanStates[] = {
+        // State 0: Empty gallows
+        "     +---+\n"
+        "     |   |\n"
+        "         |\n"
+        "         |\n"
+        "         |\n"
+        "         |\n"
+        "     ======\n",
+   
+        // State 1: Head
+        "     +---+\n"
+        "     |   |\n"
+        "     O   |\n"
+        "         |\n"
+        "         |\n"
+        "         |\n"
+        "     =======\n",
+   
+        // State 2: Head and torso
+        "     +---+\n"
+        "     |   |\n"
+        "     O   |\n"
+        "     |   |\n"
+        "         |\n"
+        "         |\n"
+        "     =======\n",
+   
+        // State 3: Head, torso, and one arm
+        "     +---+\n"
+        "     |   |\n"
+        "     O   |\n"
+        "    /|   |\n"
+        "         |\n"
+        "         |\n"
+        "     =======\n",
+   
+        // State 4: Head, torso, and both arms
+        "     +---+\n"
+        "     |   |\n"
+        "     O   |\n"
+        "    /|\\  |\n"
+        "         |\n"
+        "         |\n"
+        "     =======\n",
+   
+        // State 5: Head, torso, both arms, and one leg
+        "     +---+\n"
+        "     |   |\n"
+        "     O   |\n"
+        "    /|\\  |\n"
+        "    /    |\n"
+        "         |\n"
+        "     =======\n",
+   
+        // State 6: Full body
+        "     +---+\n"
+        "     |   |\n"
+        "     O   |\n"
+        "    /|\\  |\n"
+        "    / \\  |\n"
+        "         |\n"
+        "     =======\n",
+   
+        // State 7: Full body with closed eyes
+        "     +---+\n"
+        "     |   |\n"
+        "     O   |\n"
+        "    /|\\  |\n"
+        "    / \\  |\n"
+        "         |\n"
+        "     =======\n",
+   
+        // State 8: Game over
+        "     +---+\n"
+        "     |   |\n"
+        "     O   |\n"
+        "    /|\\  |\n"
+        "    / \\  |\n"
+        "         |\n"
+        "     =======\n"
+        "     GAME OVER\n"
+    };
+
+    int state = game->errors -1;
+    if (state > 8) state = 8;
+
+    printf("%s", hangmanStates[state]);
+}
+
+void welcomeScreen() {
+    printf("\n");
+    printf("  +-------------------------------------------+\n");
+    printf("  |             WELCOME TO HANGMAN            |\n");
+    printf("  |                 by Sax                    |\n");
+    printf("  +-------------------------------------------+\n");
+    printf("\n");
+
+    printf("                     +---+\n");
+    printf("                     |   |\n");
+    printf("                     O   |\n");
+    printf("                    /|\\  |\n");
+    printf("                    / \\  |\n");
+    printf("                         |\n");
+    printf("                     =======\n");
+
+    printf("\n");
+    printf("  +-------------- HOW TO PLAY ---------------+\n");
+    printf("  | * Guess one letter at a time             |\n");
+    printf("  | * You have 9 lives to guess the word     |\n");
+    printf("  | * The word will be revealed as you guess |\n");
+    printf("  | * Good luck and have fun!                |\n");
+    printf("  +------------------------------------------+\n");
+    printf("\n");
+    printf("  Press Enter to start...");
+    getchar();
+    printf("\n");
+}
+
