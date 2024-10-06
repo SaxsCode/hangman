@@ -11,6 +11,7 @@
 typedef struct {
     char word[MAX_WORD_LENGTH];
     char guessed[MAX_WORD_LENGTH];
+    char allGuesses[26];
     int wordLength;
     int errors;
 } GameState;
@@ -29,7 +30,7 @@ void clearInputBuffer(void);
 int getUnguessedCount(const GameState *game);
 bool playAgainPrompt(void);
 void welcomeScreen();
-void showHangman(const GameState *game);
+void showHangmanAscii(const GameState *game);
 
 
 int main() {
@@ -61,7 +62,7 @@ int main() {
                 game.errors++;
                 printf("\n  WRONG! Errors: %d/%d\n", game.errors, MAX_ERRORS);
 
-                showHangman(&game);
+                showHangmanAscii(&game);
             }
 
             displayGame(&game);
@@ -134,6 +135,7 @@ void initializeGame(GameState *game, const WordsList *wordsList) {
     strcpy(game->word, wordsList->words[randomKey]);
     game->wordLength = strlen(game->word);
     memset(game->guessed, 0, MAX_WORD_LENGTH);
+    memset(game->allGuesses, 0, 26);
     game->errors = 0;
 }
 
@@ -145,6 +147,10 @@ bool makeGuess(GameState *game, char letter) {
         }
     }
 
+    if (!strchr(game->allGuesses, letter)) {
+        game->allGuesses[strlen(game->allGuesses)] = letter;
+    }
+
     if (letterFound && !strchr(game->guessed, letter)) {
         game->guessed[strlen(game->guessed)] = letter;
         printf("\n  CORRECT! The word contains: %c\n", letter);
@@ -154,7 +160,15 @@ bool makeGuess(GameState *game, char letter) {
 }
 
 void displayGame(const GameState *game) {
-    printf("  ");
+    
+    
+    printf("  Guessed letters: ");
+    for (int i = 0; i < strlen(game->allGuesses); i++) {
+        printf("%c ", game->allGuesses[i]);
+    }
+
+    printf("\n  ");
+
     for (int i = 0; i < game->wordLength; i++) {
         if (strchr(game->guessed, game->word[i])) {
             printf("%c", game->word[i]);
@@ -162,6 +176,8 @@ void displayGame(const GameState *game) {
             printf("_");
         }
     }
+
+    
     printf("\n");
 }
 
@@ -189,7 +205,7 @@ int getUnguessedCount(const GameState *game) {
 
 // ASCII ART
 
-void showHangman(const GameState *game) {
+void showHangmanAscii(const GameState *game) {
     const char *hangmanStates[] = {
         // State 0: Empty gallows
         "     +---+\n"
