@@ -207,7 +207,22 @@ int getUnguessedCount(const GameState *game) {
 
 void showHangmanAscii(const GameState *game) {
     const char *hangmanStates[] = {
-        // State 0: Empty gallows
+        "          \n"
+        "          \n"
+        "          \n"
+        "          \n"
+        "          \n"
+        "          \n"
+        "     ======\n",
+
+        "         +\n"
+        "         |\n"
+        "         |\n"
+        "         |\n"
+        "         |\n"
+        "         |\n"
+        "     ======\n",
+        
         "     +---+\n"
         "     |   |\n"
         "         |\n"
@@ -216,7 +231,6 @@ void showHangmanAscii(const GameState *game) {
         "         |\n"
         "     ======\n",
    
-        // State 1: Head
         "     +---+\n"
         "     |   |\n"
         "     O   |\n"
@@ -225,7 +239,6 @@ void showHangmanAscii(const GameState *game) {
         "         |\n"
         "     =======\n",
    
-        // State 2: Head and torso
         "     +---+\n"
         "     |   |\n"
         "     O   |\n"
@@ -234,7 +247,6 @@ void showHangmanAscii(const GameState *game) {
         "         |\n"
         "     =======\n",
    
-        // State 3: Head, torso, and one arm
         "     +---+\n"
         "     |   |\n"
         "     O   |\n"
@@ -243,7 +255,6 @@ void showHangmanAscii(const GameState *game) {
         "         |\n"
         "     =======\n",
    
-        // State 4: Head, torso, and both arms
         "     +---+\n"
         "     |   |\n"
         "     O   |\n"
@@ -252,7 +263,6 @@ void showHangmanAscii(const GameState *game) {
         "         |\n"
         "     =======\n",
    
-        // State 5: Head, torso, both arms, and one leg
         "     +---+\n"
         "     |   |\n"
         "     O   |\n"
@@ -261,7 +271,6 @@ void showHangmanAscii(const GameState *game) {
         "         |\n"
         "     =======\n",
    
-        // State 6: Full body
         "     +---+\n"
         "     |   |\n"
         "     O   |\n"
@@ -269,25 +278,6 @@ void showHangmanAscii(const GameState *game) {
         "    / \\  |\n"
         "         |\n"
         "     =======\n",
-   
-        // State 7: Full body with closed eyes
-        "     +---+\n"
-        "     |   |\n"
-        "     O   |\n"
-        "    /|\\  |\n"
-        "    / \\  |\n"
-        "         |\n"
-        "     =======\n",
-   
-        // State 8: Game over
-        "     +---+\n"
-        "     |   |\n"
-        "     O   |\n"
-        "    /|\\  |\n"
-        "    / \\  |\n"
-        "         |\n"
-        "     =======\n"
-        "     GAME OVER\n"
     };
 
     int state = game->errors -1;
